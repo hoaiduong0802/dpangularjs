@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Basic Design Pattern AngularJS</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="./angular.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body ng-app="myApp">
+    <div class="container" ng-controller="finalexamCtrl">
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="text-center text-danger">TÍNH LƯƠNG NHÂN VIÊN</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="" name="frm">
+                            <table class="table table-bordered table-striped mt-2">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2">Họ và tên:</th>
+                                        <th>Chức vụ:</th>
+                                        <th>Ngày công:</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="2">
+                                            <input type="text" name="fullName" class="form-control" minlength="5" ng-model="user.name" required>
+                                            <label style="width: 100%;" for="" class="alert alert-danger" ng-show="frm.fullName.$invalid">Bạn chưa nhập thông tin</label>
+                                        </td>
+                                        <td>
+                                            <!-- <select name="" id="" name="r_chucvu" class="form-control" minlength="1" ng-model="user.chucvu" required>
+                                                <option ng-repeat="user in listUser" value="{{user.chucvu}}" ng-selected="selectChucvu === user.chucvu">{{user.chucvu}}</option>
+                                            </select>
+                                            <label for="" class="alert alert-danger" ng-show="frm.r_chucvu.$invalid">Bạn chưa nhập thông tin</label> -->
+                                            <select name="r_chucvu" class="form-control" ng-model="user.chucvu" required >  
+                                                <option value="{{x.chucvu}}" ng-repeat="x in listRank">{{x.chucvu}}</option>
+                                                <!-- <option value="{{user.chucvu}}" ng-repeat="user in listUser" ng-selected="selectChucvu === user.chucvu">{{user.chucvu}}</option> -->
+                                                <!-- <option value="{{user.chucvu}}" ng-selected="selectedChucvu === user.chucvu">{{user.chucvu}}</option> -->
+                                                <!-- <option value="{{user.chucvu}}">Phó Giám Đốc</option>
+                                                <option value="{{user.chucvu}}">Trưởng Phòng</option> -->
+                                            </select>
+                                            <label style="width: 100%;" for="" class="alert alert-danger" ng-show="frm.r_chucvu.$invalid">Bạn chưa chọn thông tin</label>
+                                        </td>
+                                        <td>
+                                            <input type="text" name="w_day" class="form-control" ng-min="1" ng-model="user.ngaycong" ng-change="updateThongtin()" required>
+                                            <label style="width: 100%;" for="" class="alert alert-danger" ng-show="frm.w_day.$invalid">Bạn chưa nhập thông tin</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Lương cơ bản:</th>
+                                        <th>Hệ số:</th>
+                                        <th>Ngày công vượt giờ:</th>
+                                    </tr>
+                                    <tr style="height: 50px;">
+                                        <td>
+                                            <span ng-model="user.luongcb" ng-if="user.chucvu === 'Giám Đốc'">{{user.luongcb=1000000}}</span>
+                                            <span ng-model="user.luongcb" ng-if="user.chucvu === 'Phó Giám Đốc'">{{user.luongcb=850000}}</span>
+                                            <span ng-model="user.luongcb" ng-if="user.chucvu === 'Trưởng Phòng'">{{user.luongcb=700000}}</span>
+                                        </td>
+                                        <td>
+                                            <span ng-if="user.chucvu === 'Giám Đốc' ">{{user.hesoluong=5.5}}</span>
+                                            <span ng-if="user.chucvu === 'Phó Giám Đốc' ">{{user.hesoluong=4.7}}</span>
+                                            <span ng-if="user.chucvu === 'Trưởng Phòng' ">{{user.hesoluong=4.1}}</span>
+                                        </td>
+                                        <td disabled>
+                                           <span ng-if="user.ngaycong > 25">{{tinhNgaycong()}}</span> 
+                                           <span ng-if="user.ngaycong <= 25">{{tinhNgaycong()}}</span> 
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                        <div class="group">
+                            <div class="btn btn-primary" ng-click="add()">Thêm</div>
+                            <div class="btn btn-info" ng-click="update()">Sửa</div>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <label for="">Danh sách nhân viên:</label>
+                        <table class="table table-bordered table-striped mt-2">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Họ và tên</th>
+                                    <th>Chức vụ</th>
+                                    <th>Lương CB</th>
+                                    <th>Hệ số lương</th>
+                                    <th>Ngày công</th>
+                                    <th>Thu nhập trước thuế</th>
+                                    <th>Thuế thu nhập</th>
+                                    <th>Thu nhập sau thuế</th>
+                                    <th>Chọn</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="list in listUser track by $index" ng-click="edit($index)">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{list.name}}</td>
+                                    <td>{{list.chucvu}}</td>
+                                    <td>{{list.luongcb}}</td>
+                                    <td>{{list.hesoluong}}</td>
+                                    <td>{{list.ngaycong}}</td>
+                                    <td>{{thunhaptruocthue($index) | currency}}</td>
+                                    <td>{{thuethunhap($index) | currency}}</td>
+                                    <td>{{thunhapsauthue($index) | currency}}</td>
+                                    <td>
+                                        <button class="btn btn-danger" ng-click="checkButton($index)">X</button>                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="6">Tổng cộng:</th>
+                                    <td>{{tongcongtruocthue() | currency}}</td>
+                                    <td>{{tongcongthuethunhap() | currency}}</td>
+                                    <td>{{tongcongsauthue() | currency}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        var app = angular.module("myApp", []);
+        app.controller("finalexamCtrl", function ($scope,$rootScope) {
+            $scope.user={};
+            $scope.selectedChucvu='';
+            $scope.listUser=[
+                {
+                    name:"Nguyễn Thanh Thảo",
+                    ngaycong:25,
+                    chucvu:"Giám Đốc",
+                    luongcb:1000000,
+                    hesoluong:5.5
+                },
+                {
+                    name:"Nguyễn Thảo Vân",
+                    ngaycong:25,
+                    chucvu:"Phó Giám Đốc",
+                    luongcb:850000,
+                    hesoluong:4.7,
+                },
+                {
+                    name:"Phạm Hồng Hải",
+                    ngaycong:25,
+                    chucvu:"Trưởng Phòng",
+                    luongcb:700000,
+                    hesoluong:4.1,
+                },
+            ]
+            $scope.listRank=[
+                {
+                    chucvu:"Giám Đốc",
+                    luongcb:1000000,
+                    hesoluong:5.5
+                },
+                {
+                    chucvu:"Phó Giám Đốc",
+                    luongcb:850000,
+                    hesoluong:4.7,
+                },
+                {
+                    chucvu:"Trưởng Phòng",
+                    luongcb:700000,
+                    hesoluong:4.1,
+                }
+            ]
+            // $scope.tinhTieuthu = function(element) {
+            //     $rootScope.sum = $scope.listUser[element].newNumber - $scope.listUser[element].oldNumber
+            //     return $rootScope.sum
+            // }
+            
+            $scope.thunhaptruocthue = function(element){
+                var list = $scope.listUser[element]
+                if (list){
+                    return list.luongcb * list.hesoluong * list.ngaycong
+                }
+                return 0
+            }
+            $scope.thuethunhap = function(element){
+                $scope.thuetn = $scope.thunhaptruocthue(element);
+                return $scope.thuetn * 0.1
+            }
+            $scope.thunhapsauthue=function(element){
+                return $scope.thunhaptruocthue(element) - $scope.thuethunhap(element)
+            }
+            $scope.tinhNgaycong = function(element){
+                if($scope.user.ngaycong > 25){
+                  return parseInt($scope.user.ngaycong - 25)*2 + parseInt($scope.user.ngaycong) 
+                } else {
+                    return $scope.user.ngaycong
+                }
+            }
+            $scope.tinhluongCB = function () {
+                if ($scope.user.luongcb && $scope.user.ngaycong) {
+                    for (var i = 0; i < $scope.listUser.length; i++) {
+                        if ($scope.listUser[i].chucvu) {
+                            console.log($scope.listUser[i].luongcb * $scope.listUser[i].hesoluong * $scope.user.ngaycong)
+                            return $scope.listUser[i].luongcb * $scope.listUser[i].hesoluong * $scope.user.ngaycong;
+                        }
+                    }
+                }
+                return 0;
+            };
+
+            // $scope.edit =function (element){
+            //     $scope.index=element
+            //     console.log($scope.index)
+            //     $scope.user = angular.copy($scope.listUser[element])
+            //     console.log($scope.user)
+            //     $scope.selectedChucvu = $scope.listUser[element].chucvu
+            //     console.log($scope.selectChucvu)
+            // }
+            $scope.clear = function (){
+                $scope.user.name= null;
+                $scope.user.chucvu = '';
+                $scope.user.luongcb = null;
+                $scope.user.hesoluong = null;
+                $scope.user.ngaycong = null;
+            }
+            $scope.edit = function(element) {
+                $scope.index = element;
+                $scope.user = angular.copy($scope.listUser[element]);
+            }
+            $scope.update = function(element){
+                var foundUserIndex = -1;
+                for (var i = 0; i < $scope.listUser.length; i++) {
+                    if ($scope.listUser[i].name === $scope.user.name) {
+                        foundUserIndex = i;
+                        break;
+                    }
+                }
+                if (foundUserIndex !== -1) {
+                    $scope.listUser[foundUserIndex].chucvu = $scope.user.chucvu
+                    $scope.listUser[foundUserIndex].luongcb = $scope.user.luongcb; // Cập nhật lương cơ bản
+                    $scope.listUser[foundUserIndex].hesoluong = $scope.user.hesoluong; // Cập nhật hệ số lương
+                    $scope.listUser[foundUserIndex].ngaycong = parseInt($scope.user.ngaycong)  // Cập nhật ngày công
+                    // Gọi lại hàm tính toán thông tin liên quan và cập nhật giá trị mới vào listUser
+                    // $scope.listUser[foundUserIndex].thunhaptruoc = $scope.thunhaptruocthue(foundUserIndex);
+                    // $scope.listUser[foundUserIndex].thue = $scope.thuethunhap(foundUserIndex);
+                    // $scope.listUser[foundUserIndex].thunhapsau = $scope.thunhapsauthue(foundUserIndex);
+
+                    // $scope.clear(); // Xóa trống form sau khi cập nhật thành công
+                    console.log($scope.listUser[foundUserIndex]);
+                } else {
+                    alert('Người dùng không tồn tại trong danh sách');
+                }
+            }
+            $scope.add = function(){
+                // console.log(1)
+                $scope.listUser.push(angular.copy($scope.user))
+                $scope.clear($scope.user)
+            }
+            $scope.delete = function(element){
+                console.log(element)
+                // console.log($scope.listUser[0])
+                // $scope.listUser.pop(angular.copy($scope.listUser[element]))
+                $scope.listUser.splice(element,1);
+            }
+            
+            $scope.checkButton = function(element){
+                $scope.checkBtn = confirm("Bạn có chắc chắn muốn xóa?")
+                if ($scope.checkBtn){
+                    $scope.delete(element)
+                } else {
+                    console.log(2)
+                }
+            }
+            $scope.tongcongtruocthue = function(){
+                $scope.sum=0;
+                for(var i = 0; i< $scope.listUser.length;i++){
+                    $scope.sum+=$scope.thunhaptruocthue(i)
+                    
+                }return $scope.sum
+            }
+            $scope.tongcongthuethunhap = function(){
+                $scope.sum=0;
+                for(var i = 0; i< $scope.listUser.length;i++){
+                    $scope.sum+=$scope.thuethunhap(i)
+                    
+                }return $scope.sum
+            }
+            $scope.tongcongsauthue = function(){
+                $scope.sum=0;
+                for(var i = 0; i< $scope.listUser.length;i++){
+                    $scope.sum+=$scope.thunhapsauthue(i)
+                    
+                }return $scope.sum
+            }
+            // $scope.updateSelectedChucvu = function(){
+            //     $scope.user.chucvu = $scope.selectedChucvu
+            // }
+            // $scope.updateThongTin = function() {
+            //     // Gọi các hàm tính toán lại thông tin thu nhập, thuế thu nhập và thu nhập sau thuế
+            //     $scope.user.luongcb = $scope.tinhluongCB();
+            //     $scope.user.ngaycong = $scope.tinhNgaycong();
+            //     // Cập nhật lại thu nhập trước thuế, thuế thu nhập và thu nhập sau thuế
+            //     $scope.user.thunhaptruoc = $scope.thunhaptruocthue($scope.index);
+            //     $scope.user.thue = $scope.thuethunhap($scope.index);
+            //     $scope.user.thunhapsau = $scope.thunhapsauthue($scope.index);
+            // };
+        });
+    </script>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
